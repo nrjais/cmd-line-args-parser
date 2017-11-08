@@ -1,0 +1,25 @@
+Expectations :
+  output = {
+    options : {
+      key(an option) : value(if needed)
+      key(an option) : value(if needed)
+      key(an option) : value(if needed)
+    },
+    arguments : [all remaining arguments]
+  }
+
+Requirements for parser
+  what are all legal options and their default values
+  what is the default option and its value
+  what are the flags
+  verbose of all the options if any
+  rules = {
+    validOptions: ['n','c'],
+    default: {
+      'n': 10
+    },
+    minimum: 1,
+    maximum: 1,
+    flags: [],
+    verbose: {}
+  };
