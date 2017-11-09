@@ -1,14 +1,16 @@
-let Parser = function(parseRules) {
+let Parser = function(parseRules,valueVerify) {
   this.rules = parseRules;
   this.parsedData = {};
   this.reset();
+  this.valueVerify = valueVerify;
 }
 
-Parser.prototype.reset= function(){
+Parser.prototype.reset = function() {
   this.parsedData = {
-    flags : [],
+    flags: [],
     options: {},
-    arguments: []
+    arguments: [],
+    argsLength: 'noArgs'
   }
 }
 
@@ -33,7 +35,18 @@ Parser.prototype.hasMinimumOptions = function() {
   if (options.length > this.rules.maximum) {
     throw new this.error('Max Options', 'Cannot combine : -' + options.join(' -'));
   }
+  this.setArgumentsLength();
   return this.parsedData;
+}
+
+Parser.prototype.setArgumentsLength = function() {
+  let data = this.parsedData;
+  data.arguments.length > 0 && this.updateArgumentsLength('single');
+  data.arguments.length > 1 && this.updateArgumentsLength('multiple');
+}
+
+Parser.prototype.updateArgumentsLength = function(update) {
+  this.parsedData.argsLength = update;
 }
 
 Parser.prototype.setDefaults = function() {
@@ -44,21 +57,16 @@ Parser.prototype.setDefaults = function() {
 
 Parser.prototype.setOptionValue = function(option, value) {
   this.verifyValidity(option);
-  if (this.isNumber(value)) {
-    this.parsedData.options[option] = +value;
+  if (this.valueVerify(value)) {
+    this.parsedData.options[option] = value;
   } else {
     throw new this.error('Missing value', 'Value of : -' + option + ' is missing');
   }
   return true;
 }
 
-Parser.prototype.containsValue = function(option) {
-  let regex = /(\d)+$/g
-  return regex.test(option);
-}
-
 Parser.prototype.handleOption = function(option, argsList) {
-  if (this.containsValue(option)) {
+  if (this.valueVerify(option)) {
     this.setOptionValue(...this.getOptionAndValue(option));
   } else if (this.isFlag(option)) {
     this.parsedData.flags.push(option);

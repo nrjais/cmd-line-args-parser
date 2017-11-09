@@ -5,7 +5,9 @@ Expectations :
       key(an option) : value(if needed)
       key(an option) : value(if needed)
     },
-    arguments : [all remaining arguments]
+    argsLength : 'noArgs/single/multiple',
+    arguments : [all remaining arguments],
+    flags : []
   }
 
 Requirements for parser
@@ -14,7 +16,7 @@ Requirements for parser
   what are the flags
   verbose of all the options if any
   rules = {
-    validOptions: ['n','c'],
+    validOptions: validOptions,
     default: {
       'n': 10
     },
