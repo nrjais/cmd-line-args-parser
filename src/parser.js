@@ -1,4 +1,4 @@
-let error = require('./Error');
+let error = require('./error');
 
 let Parser = function(parseRules,isValue,containsValue) {
   this.rules = parseRules;
