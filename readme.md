@@ -1,6 +1,5 @@
-[![CircleCI](https://circleci.com/bb/veera83372/command-line-argumnets-parser/tree/master.svg?style=shield&circle-token=a723bccdc76d4581bf70d5a59b590244067fa307)](https://circleci.com/bb/veera83372/command-line-argumnets-parser/tree/master)
 
-# command-line-arguments-parser
+# cmd-line-args-parser
 
 This is a command line arguments parser written in Javascript that helps parse command line arguments and it will return object with boolean flags ,value flags, arguments, optionSetBy and default option. You should define rules to parse.
 
@@ -26,7 +25,7 @@ rules = {
   default: {            //default option to set if no option specified
     'n': 10
   },
-  minimum: 1,           /*minimum number of required options if the argumentshave
+  minimum: 1,           /*minimum number of required options if the arguments have
                           less than minimum options than default option will be set*/
   maximum: 1,           /*maximum number of required options that are allowed
                           otherwise an error will be thrown*/

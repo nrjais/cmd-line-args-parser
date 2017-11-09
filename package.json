@@ -1,13 +1,13 @@
 {
   "name": "cmd-line-args-parser",
-  "version": "1.0.2",
+  "version": "1.0.0",
   "description": "this package help to parse command line arguments to specific structure you can customize it for any command",
   "main": "index.js",
   "directories": {
     "test": "test"
   },
   "scripts": {
-    "test": "node runAllTest.js"
+    "test": "node runAllTests.js"
   },
   "keywords": [
     "command-line",
