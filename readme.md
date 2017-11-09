@@ -1,6 +1,8 @@
 
 # cmd-line-args-parser
 
+[![CircleCI](https://circleci.com/gh/nrjais/cmd-line-args-parser/tree/master.svg?style=shield&circle-token=897e6a1defad17b1f69f974d5457ac530f4c0f7f)](https://circleci.com/gh/nrjais/cmd-line-args-parser/tree/master)
+
 This is a command line arguments parser written in Javascript that helps parse command line arguments and it will return object with boolean flags ,value flags, arguments, optionSetBy and default option. You should define rules to parse.
 
 ## Motivation
