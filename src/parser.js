@@ -1,8 +1,11 @@
-let Parser = function(parseRules,valueVerify) {
+let error = require('./Error');
+
+let Parser = function(parseRules,isValue,containsValue) {
   this.rules = parseRules;
   this.parsedData = {};
   this.reset();
-  this.valueVerify = valueVerify;
+  this.containsValue = containsValue || this.hasValue;
+  this.isValue = isValue || this.isNumber;
 }
 
 Parser.prototype.reset = function() {
@@ -14,11 +17,16 @@ Parser.prototype.reset = function() {
   }
 }
 
+Parser.prototype.hasValue = function(option) {
+  let regex = /(\d)+$/g;
+  return regex.test(option);
+}
+
 Parser.prototype.parse = function(argsList) {
   let arg = argsList[0];
   if (this.isOption(arg)) {
     option = arg.replace('-', '');
-    args = argsList.slice(1)
+    args = argsList.slice(1);
     this.handleOption(option, args);
     this.parse(args);
   } else {
@@ -33,7 +41,7 @@ Parser.prototype.hasMinimumOptions = function() {
     this.setDefaults();
   }
   if (options.length > this.rules.maximum) {
-    throw new this.error('Max Options', 'Cannot combine : -' + options.join(' -'));
+    throw new error('Max Options', 'Cannot combine : -' + options.join(' -'));
   }
   this.setArgumentsLength();
   return this.parsedData;
@@ -57,16 +65,16 @@ Parser.prototype.setDefaults = function() {
 
 Parser.prototype.setOptionValue = function(option, value) {
   this.verifyValidity(option);
-  if (this.valueVerify(value)) {
+  if (this.isValue(value)) {
     this.parsedData.options[option] = value;
   } else {
-    throw new this.error('Missing value', 'Value of : -' + option + ' is missing');
+    throw new error('Missing value', 'Value of : -' + option + ' is missing');
   }
   return true;
 }
 
 Parser.prototype.handleOption = function(option, argsList) {
-  if (this.valueVerify(option)) {
+  if (this.containsValue(option)) {
     this.setOptionValue(...this.getOptionAndValue(option));
   } else if (this.isFlag(option)) {
     this.parsedData.flags.push(option);
@@ -91,7 +99,7 @@ Parser.prototype.getDefaultOptionValue = function() {
 
 Parser.prototype.getOptionAndValue = function(option) {
   let optionValue = [];
-  if (this.isNumber(option)) {
+  if (this.isValue(option)) {
     let defaultOption = this.getDefaultOptionValue()[0];
     optionValue.push(defaultOption, option);
   } else {
@@ -118,14 +126,9 @@ Parser.prototype.verifyValidity = function(option) {
   let allLegal = this.rules.validOptions.concat(this.rules.flags);
   let legal = allLegal.includes(option);
   if (!legal) {
-    throw new this.error("IllegalOption", "Illegal option : " + option);
+    throw new error("IllegalOption", "Illegal option : " + option);
   }
   return legal;
-}
-
-Parser.prototype.error = function(name, message) {
-  this.name = name;
-  this.message = message;
 }
 
 module.exports = Parser;

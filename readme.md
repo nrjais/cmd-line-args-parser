@@ -3,7 +3,7 @@
 
 [![CircleCI](https://circleci.com/gh/nrjais/cmd-line-args-parser/tree/master.svg?style=shield&circle-token=897e6a1defad17b1f69f974d5457ac530f4c0f7f)](https://circleci.com/gh/nrjais/cmd-line-args-parser/tree/master)
 
-This is a command line arguments parser written in Javascript that helps parse command line arguments and it will return object with boolean flags ,value flags, arguments, optionSetBy and default option. You should define rules to parse.
+This is a command line arguments parser written in Javascript that helps parse command line arguments and it will return object with boolean flags arry,value option object and arguments list. You should define rules to parse.
 
 ## Motivation
 
@@ -18,7 +18,7 @@ I am implementing head (shell command) functionality using node js I found that 
 ```javascript
 var Parser=require('cmd-line-args-parser');
 
-var parserName=new Parser(rules);
+var parserName=new Parser(rules,isValue,containsValue);
 
 //the following is the structure for specifying rules
 
@@ -37,6 +37,7 @@ rules = {
 
  //pass an array of  things to parse method to get parsedArguments
  parserName.parse(args); //example let args =['-n','10','files'] for head
+
 ```
 
 ### Examples
@@ -58,25 +59,43 @@ rules = {
   }
 
   /*
-  value verifier is a function that can verify if a value is in the option or not
+  containsValue is a function that can verify if a value is in the option or not
   like -n10 here 10 is the value so the function can determine if the
   option contains the value
   or not.
   */
 
-  let valueVerifier = function(value) {
+  //default if not given
+  let containsValue = function(value) {
     let regex = /(\d)+$/g
     return regex.test(value);
   }
 
-  let headParser = new Parser(rules,valueVerifier);
-/*
-once some arguments are parsed then you need to reset the parser
-to parse new arguments again
-you can do that by
-*/
+  /*
+  isNumber is the function that determines if the value given value is legal or not
+  if this function is not given then the below function is used by default.
+  */
+
+  //default
+  let isNumber = function(value){
+    return Number.isInteger(+value);
+  };
+
+  /*
+  if no value verifier is specified then the above verifier will be used
+  by default
+  */
+
+  let headParser = new Parser(rules,isNumber,containsValue);
+
+  /*
+  once some arguments are parsed then you need to reset the parser
+  to parse new arguments again
+  you can do that by
+  */
 
 parserName.reset();
+
 ```
 
 ## Errors thrown at different cases
@@ -162,4 +181,5 @@ args=['-n10','-20'];
   argsLength : 'single',
   arguments: ["toDo.txt"]
 }
+
 ```

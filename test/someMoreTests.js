@@ -2,28 +2,32 @@ const assert = require('assert');
 let Parser = require('./../src/parser.js');
 let test = {};
 
-let getRules = function(validOptions = ['n', 'c'], flags = [], maximum = 2) {
+let getRules = function() {
   return {
-    validOptions: validOptions,
+    validOptions: ['n', 'c'],
     default: {
       'n': 10
     },
     minimum: 1,
-    maximum: maximum,
-    flags: flags,
+    maximum: 2,
+    flags: [],
     verbose: {}
   };
 }
 
-let isNumber = function(option) {
-  let regex = /(\d)+$/g
+let containsNumber = function(option) {
+  let regex = /(\d)+$/g;
   return regex.test(option);
 }
 
 
+let isNumber = function(value) {
+  return Number.isInteger(+value);
+};
+
 test['parse seperates options option and value'] = function() {
   let demoArgs1 = ['-n10', '-c12'];
-  let parser = new Parser(getRules(), isNumber)
+  let parser = new Parser(getRules())
   let expected = {
     argsLength: 'noArgs',
     arguments: [],
@@ -38,7 +42,7 @@ test['parse seperates options option and value'] = function() {
 };
 test['parse seperates options option and value and optional argument in arguments'] = function() {
   let demoArgs2 = ['-n10', '-c12', "toDo.txt"];
-  let parser = new Parser(getRules(), isNumber)
+  let parser = new Parser(getRules(), isNumber, containsNumber)
   let expected = {
     argsLength: 'single',
     arguments: ['toDo.txt'],
@@ -53,7 +57,7 @@ test['parse seperates options option and value and optional argument in argument
 };
 test['parse seperates options and value,files in arguments and flags'] = function() {
   let demoArgs3 = ['-n12', "toDo.txt", '--help'];
-  let parser = new Parser(getRules(), isNumber)
+  let parser = new Parser(getRules(), isNumber, containsNumber)
   let expected = {
     argsLength: 'multiple',
     arguments: ['toDo.txt', '--help'],
@@ -67,7 +71,7 @@ test['parse seperates options and value,files in arguments and flags'] = functio
 };
 test['parse gives default value of empty arguments'] = function() {
   let demoArgs4 = [];
-  let parser = new Parser(getRules(), isNumber)
+  let parser = new Parser(getRules(), isNumber, containsNumber)
   let expected = {
     argsLength: 'noArgs',
     arguments: [],
@@ -81,7 +85,7 @@ test['parse gives default value of empty arguments'] = function() {
 };
 test['parse should put all the optional argument in arguments'] = function() {
   let demoArgs5 = ["toDo.txt", 'abc.txt'];
-  let parser = new Parser(getRules(), isNumber)
+  let parser = new Parser(getRules(), isNumber, containsNumber)
   let expected = {
     argsLength: 'multiple',
     arguments: ['toDo.txt', 'abc.txt'],
@@ -95,7 +99,7 @@ test['parse should put all the optional argument in arguments'] = function() {
 };
 test['parse should seperates all the input in options,arguments and verbose'] = function() {
   let demoArgs6 = ['-n12', '-c12', 'toDo.txt', 'sample.js', '--help'];
-  let parser = new Parser(getRules(), isNumber)
+  let parser = new Parser(getRules(), isNumber, containsNumber)
   let expected = {
     argsLength: 'multiple',
     arguments: ['toDo.txt', 'sample.js', '--help'],
