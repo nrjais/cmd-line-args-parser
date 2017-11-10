@@ -70,6 +70,7 @@ test["getDefaultOptionValue should return default option with value"] = function
 
 test["getCombinedSeparately should return all options separated in array"] = function() {
   let parser = new Parser(getRules());
+  parser.setCombinedFlags(true)
   assert.deepEqual(parser.getCombinedSeparately('acd'), ['a', 'c', 'd']);
 };
 

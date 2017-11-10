@@ -1,13 +1,13 @@
 let Error = require('./error');
 
-let Parser = function(parseRules, isValue, containsValue) {
+let Parser = function(parseRules) {
   this.rules = parseRules;
   this.parsedData = {};
   let combinedFlags = parseRules.combinedFlags;
-  this.rules.combinedFlags = combinedFlags === undefined ? true : combinedFlags;
+  this.rules.combinedFlags = false;
+  this.containsValue = this.hasValue;
+  this.isValue = this.isNumber;
   this.reset();
-  this.containsValue = containsValue || this.hasValue;
-  this.isValue = isValue || this.isNumber;
 }
 
 Parser.prototype.reset = function() {
@@ -17,6 +17,18 @@ Parser.prototype.reset = function() {
     arguments: [],
     argsLength: 'noArgs'
   }
+}
+
+Parser.prototype.setIsValue = function(isValue){
+  this.isValue = isValue;
+}
+
+Parser.prototype.setContainsValue = function(containsValue){
+  this.containsValue = containsValue;
+}
+
+Parser.prototype.setCombinedFlags = function(value){
+  this.rules.combinedFlags = value;
 }
 
 Parser.prototype.hasValue = function(option) {
