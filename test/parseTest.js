@@ -20,9 +20,9 @@ let containsNumber = function(option) {
   return regex.test(option);
 }
 
-let isNumber = function(value){
+let isNumber = function(value) {
   return Number.isInteger(+value);
-};
+}
 
 test["parse should give formatted object when has no arguments"] = function() {
   let args = [];
@@ -163,6 +163,28 @@ test["parse should give formatted object when has multiple options combined(-ac)
     arguments: []
   }
   assert.deepEqual(parser.parse(args), expectedArgv);
+}
+
+test["parse should throw error when value is missing"] = function() {
+  let args = ["-n"];
+  let parser = new Parser(getRules(), isNumber, containsNumber)
+  try {
+    parser.parse(args)
+    assert.ok(false);
+  } catch (err) {
+    assert.equal(err.name,'MissingValue')
+  }
+}
+
+test["parse should throw error when value is invalid"] = function() {
+  let args = ["-n",'a'];
+  let parser = new Parser(getRules(), isNumber, containsNumber)
+  try {
+    parser.parse(args)
+    assert.ok(false);
+  } catch (err) {
+    assert.equal(err.name,'MissingValue')
+  }
 }
 
 exports.test = test;

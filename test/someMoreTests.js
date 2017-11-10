@@ -2,16 +2,19 @@ const assert = require('assert');
 let Parser = require('./../src/parser.js');
 let test = {};
 
-let getRules = function() {
+let getRules = function(flags = ['h']) {
   return {
-    validOptions: ['n', 'c'],
+    validOptions: ['n', 'c','d'],
     default: {
       'n': 10
     },
     minimum: 1,
     maximum: 2,
-    flags: [],
-    verbose: {}
+    combinedFlags : false,
+    flags: flags,
+    verbose: {
+      'help': 'h'
+    }
   };
 }
 
@@ -98,12 +101,12 @@ test['parse should put all the optional argument in arguments'] = function() {
   assert.deepEqual(actual, expected);
 };
 test['parse should seperates all the input in options,arguments and verbose'] = function() {
-  let demoArgs6 = ['-n12', '-c12', 'toDo.txt', 'sample.js', '--help'];
+  let demoArgs6 = ['-n12', '-c12', '--help', 'toDo.txt', 'sample.js'];
   let parser = new Parser(getRules(), isNumber, containsNumber)
   let expected = {
     argsLength: 'multiple',
-    arguments: ['toDo.txt', 'sample.js', '--help'],
-    flags: [],
+    arguments: ['toDo.txt', 'sample.js'],
+    flags: ['h'],
     options: {
       n: '12',
       c: '12'
@@ -111,6 +114,40 @@ test['parse should seperates all the input in options,arguments and verbose'] = 
   };
   let actual = parser.parse(demoArgs6);
   assert.deepEqual(actual, expected);
+};
+
+test["parse should throw an error when trying to combine flags"] = function(){
+  let args = ["-ac"];
+  let parser = new Parser(getRules(['a','c']), isNumber, containsNumber)
+  try {
+    parser.parse(args);
+    assert.ok(false);
+  } catch (err) {
+    assert.equal(err.name,'CombiningFlags')
+  }
+};
+
+test["parse should throw an error when options exceed max allowed"] = function(){
+  let args = ["-n4",'-c3','-d5'];
+  let parser = new Parser(getRules(['a','c']), isNumber, containsNumber)
+  try {
+    parser.parse(args);
+    assert.ok(false);
+  } catch (err) {
+    assert.equal(err.name,'MaxOptions');
+  }
+};
+
+
+test["parse should throw an error when has invalid options option"] = function(){
+  let args = ['-k5'];
+  let parser = new Parser(getRules(), isNumber, containsNumber)
+  try {
+    parser.parse(args);
+    assert.ok(false);
+  } catch (err) {
+    assert.equal(err.name,'IllegalOption');
+  }
 };
 
 exports.test = test;

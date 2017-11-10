@@ -3,7 +3,8 @@
 // run it like this:
 // node ./_runAllTests.js
 
-let testFiles = ['test/parseTest','test/someMoreTests'];
+let testFiles = ['test/parseTest','test/someMoreTests','test/separateTest',
+                'test/errorTest'];
 
 let files = 0;
 let total = 0;

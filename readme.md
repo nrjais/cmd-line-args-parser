@@ -1,11 +1,6 @@
+[![Join the chat at https://gitter.im/cmd-line-args-parser/Lobby](https://badges.gitter.im/cmd-line-args-parser/Lobby.svg)](https://gitter.im/cmd-line-args-parser/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![CircleCI](https://circleci.com/gh/nrjais/cmd-line-args-parser/tree/master.svg?style=shield&circle-token=897e6a1defad17b1f69f974d5457ac530f4c0f7f)](https://circleci.com/gh/nrjais/cmd-line-args-parser/tree/master) [![Build Status](https://travis-ci.org/nrjais/cmd-line-args-parser.svg?branch=master)](https://travis-ci.org/nrjais/cmd-line-args-parser) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 # cmd-line-args-parser
-
-[![Join the chat at https://gitter.im/cmd-line-args-parser/Lobby](https://badges.gitter.im/cmd-line-args-parser/Lobby.svg)](https://gitter.im/cmd-line-args-parser/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
-[![CircleCI](https://circleci.com/gh/nrjais/cmd-line-args-parser/tree/master.svg?style=shield&circle-token=897e6a1defad17b1f69f974d5457ac530f4c0f7f)](https://circleci.com/gh/nrjais/cmd-line-args-parser/tree/master)
-[![Build Status](https://travis-ci.org/nrjais/cmd-line-args-parser.svg?branch=master)](https://travis-ci.org/nrjais/cmd-line-args-parser)
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 This is a command line arguments parser written in Javascript that helps parse command line arguments and it will return object with boolean flags arry,value option object and arguments list. You should define rules to parse.
 
@@ -31,17 +26,21 @@ rules = {
   default: {            //default option to set if no option specified
     'n': 10
   },
-  minimum: 1,           /*minimum number of required options if the arguments have
+  minimum: 1,           /*
+                          minimum number of required options if the arguments have
                           less than minimum options than default option will be set*/
-  maximum: 1,           /*maximum number of required options that are allowed
+  maximum: 1,           /*
+                          maximum number of required options that are allowed
                           otherwise an error will be thrown*/
   flags: [],             //all the flags allowed
-  verbose: {}            // not implemented yet
+  verbose: {}           /*
+                          rules that define verboses so that they can be converted
+                          to a flag
+                        */
 }
 
  //pass an array of  things to parse method to get parsedArguments
  parserName.parse(args); //example let args =['-n','10','files'] for head
-
 ```
 
 ### Examples
@@ -56,17 +55,20 @@ rules = {
     default: {
       'n': 10
     },
+    combinedFlags : false,    //true by default if not set in rules
+                              //if false then two or more flags cannot be combined
+                              // like '-acs'  will not work
     minimum: 1,
     maximum: 1,
-    flags: [],
-    verbose: {}
+    flags: ['h'],
+    verbose: {'help':'h'} //here --help will be replaced by 'h' so 'h' should be valid flag
   }
 
   /*
-  containsValue is a function that can verify if a value is in the option or not
-  like -n10 here 10 is the value so the function can determine if the
-  option contains the value
-  or not.
+    containsValue is a function that can verify if a value is in the option or not
+    like -n10 here 10 is the value so the function can determine if the
+    option contains the value
+    or not.
   */
 
   //default if not given
@@ -76,8 +78,8 @@ rules = {
   }
 
   /*
-  isNumber is the function that determines if the value given value is legal or not
-  if this function is not given then the below function is used by default.
+    isNumber is the function that determines if the value given value is legal or not
+    if this function is not given then the below function is used by default.
   */
 
   //default
@@ -86,35 +88,38 @@ rules = {
   };
 
   /*
-  if no value verifier is specified then the above verifier will be used
-  by default
+    if no value verifier is specified then the above verifier will be used
+    by default
   */
 
   let headParser = new Parser(rules,isNumber,containsValue);
 
   /*
-  once some arguments are parsed then you need to reset the parser
-  to parse new arguments again
-  you can do that by
+    once some arguments are parsed then you need to reset the parser
+    to parse new arguments again
+    you can do that by
   */
 
 parserName.reset();
-
 ```
 
 ## Errors thrown at different cases
 
 ```javascript
 {
-  name:'Max Options',
+  name:'MaxOptions',
   message:'Cannot combine : -option1 -option2'
 }
 {
-  name:'Missing value',
+  name:'Missingvalue',
   message:'Value of : -option is missing'}
 {
   name:'IllegalOption',
   message:'Illegal option : -option'
+}
+{
+  name:'CombiningFlags',                    //only when combinedFlags is set false
+  message:'Combining Multiple flags not allowed'
 }
 ```
 
@@ -134,6 +139,17 @@ parserName.reset();
     },
     argsLength : 'single',
     arguments: ["toDo.txt"]
+  }
+
+  args=["--help"];
+  //output
+  {
+    flags: ['h'],
+    options: {
+      n: 10
+    },
+    argsLength : 'noArgs',
+    arguments: []
   }
 
   args=['-n12',"toDo.txt"];//once it see argument remaining everything is argument
@@ -185,5 +201,4 @@ args=['-n10','-20'];
   argsLength : 'single',
   arguments: ["toDo.txt"]
 }
-
 ```

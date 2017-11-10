@@ -1,8 +1,10 @@
-let error = require('./error');
+let Error = require('./error');
 
-let Parser = function(parseRules,isValue,containsValue) {
+let Parser = function(parseRules, isValue, containsValue) {
   this.rules = parseRules;
   this.parsedData = {};
+  let combinedFlags = parseRules.combinedFlags;
+  this.rules.combinedFlags = combinedFlags === undefined ? true : combinedFlags;
   this.reset();
   this.containsValue = containsValue || this.hasValue;
   this.isValue = isValue || this.isNumber;
@@ -41,7 +43,8 @@ Parser.prototype.hasMinimumOptions = function() {
     this.setDefaults();
   }
   if (options.length > this.rules.maximum) {
-    throw new error('Max Options', 'Cannot combine : -' + options.join(' -'));
+    let err = new Error('MaxOptions', 'Cannot combine : -' + options.join(' -'));
+    err.throw();
   }
   this.setArgumentsLength();
   return this.parsedData;
@@ -68,18 +71,24 @@ Parser.prototype.setOptionValue = function(option, value) {
   if (this.isValue(value)) {
     this.parsedData.options[option] = value;
   } else {
-    throw new error('Missing value', 'Value of : -' + option + ' is missing');
+    let err = new Error('MissingValue', 'Value of : -' + option + ' is missing');
+    err.throw();
   }
   return true;
 }
 
+Parser.prototype.getOptionIfVerbose = function(option) {
+  return this.rules.verbose[option.replace('-', '')] || option;
+};
+
 Parser.prototype.handleOption = function(option, argsList) {
+  option = this.getOptionIfVerbose(option);
   if (this.containsValue(option)) {
     this.setOptionValue(...this.getOptionAndValue(option));
   } else if (this.isFlag(option)) {
     this.parsedData.flags.push(option);
   } else if (option.length > 1) {
-    let allOptions = this.getOptionsSeparately(option);
+    let allOptions = this.getCombinedSeparately(option);
     allOptions.forEach((option) => this.handleOption(option, argsList));
   } else {
     this.setOptionValue(option, argsList.shift());
@@ -87,8 +96,12 @@ Parser.prototype.handleOption = function(option, argsList) {
   return this.parsedData;
 }
 
-Parser.prototype.getOptionsSeparately = function(options) {
-  return options.match(/([^\W\d]|([\d]+))/g);
+Parser.prototype.getCombinedSeparately = function(options) {
+  if (!this.rules.combinedFlags) {
+    let err = new Error('CombiningFlags', 'Combining Multiple flags not allowed');
+    err.throw();
+  }
+  return options.split('');
 }
 
 Parser.prototype.getDefaultOptionValue = function() {
@@ -114,7 +127,7 @@ Parser.prototype.isNumber = function(option) {
 }
 
 Parser.prototype.isOption = function(option) {
-  let regex = /^-(\w)+/g;
+  let regex = /^-{1,2}(\w)+/g;
   return regex.test(option);
 }
 
@@ -126,7 +139,8 @@ Parser.prototype.verifyValidity = function(option) {
   let allLegal = this.rules.validOptions.concat(this.rules.flags);
   let legal = allLegal.includes(option);
   if (!legal) {
-    throw new error("IllegalOption", "Illegal option : " + option);
+    let err = new Error("IllegalOption", "Illegal option : " + option);
+    err.throw();
   }
   return legal;
 }
