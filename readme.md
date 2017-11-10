@@ -1,6 +1,8 @@
 
 # cmd-line-args-parser
 
+[![Join the chat at https://gitter.im/cmd-line-args-parser/Lobby](https://badges.gitter.im/cmd-line-args-parser/Lobby.svg)](https://gitter.im/cmd-line-args-parser/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 [![CircleCI](https://circleci.com/gh/nrjais/cmd-line-args-parser/tree/master.svg?style=shield&circle-token=897e6a1defad17b1f69f974d5457ac530f4c0f7f)](https://circleci.com/gh/nrjais/cmd-line-args-parser/tree/master)
 [![Build Status](https://travis-ci.org/nrjais/cmd-line-args-parser.svg?branch=master)](https://travis-ci.org/nrjais/cmd-line-args-parser)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
