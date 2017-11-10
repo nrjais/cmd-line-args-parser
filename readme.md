@@ -2,7 +2,7 @@
 
 # cmd-line-args-parser
 
-This is a command line arguments parser written in Javascript that helps parse command line arguments and it will return object with boolean flags arry,value option object and arguments list. You should define rules to parse.
+This is a command line arguments parser written in Javascript that helps parse command line arguments and it will return object with boolean-flags array ,value-option object and arguments list. You have to define rules to parse in a defined structure.
 
 ## Motivation
 
