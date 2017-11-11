@@ -17,7 +17,7 @@ I am implementing head (shell command) functionality using node js I found that 
 ```javascript
 var Parser=require('cmd-line-args-parser');
 
-var parserName=new Parser(rules,isValue,containsValue);
+var parserName=new Parser(rules);
 
 //the following is the structure for specifying rules
 
@@ -55,20 +55,20 @@ rules = {
     default: {
       'n': 10
     },
-    combinedFlags : false,    //true by default if not set in rules
-                              //if false then two or more flags cannot be combined
-                              // like '-acs'  will not work
     minimum: 1,
     maximum: 1,
     flags: ['h'],
     verbose: {'help':'h'} //here --help will be replaced by 'h' so 'h' should be valid flag
   }
 
+
+
+  parserName.setCombinedFlags(true);
   /*
-    containsValue is a function that can verify if a value is in the option or not
-    like -n10 here 10 is the value so the function can determine if the
-    option contains the value
-    or not.
+    false by default
+    if false then two or more flags cannot be combined
+    like '-acs'  will not work
+    if true then it will be ['a','c','s']
   */
 
   //default if not given
@@ -78,29 +78,39 @@ rules = {
   }
 
   /*
-    isNumber is the function that determines if the value given value is legal or not
-    if this function is not given then the below function is used by default.
+    containsValue is a function that can verify if a value is in the option or not
+    like -n10 here 10 is the value so the function can determine if the
+    option contains the value
+    or not.
   */
+  parserName.setContainsValue(containsValue);
 
-  //default
+
   let isNumber = function(value){
     return Number.isInteger(+value);
   };
-
   /*
-    if no value verifier is specified then the above verifier will be used
+    isNumber is the function that determines if the value given value is legal or not
+    if this function is not given then the below function is used by default.
+  */
+  parserName.setIsValue(isNumber);
+  /*
+    if no isValue function is set then the above isNumber will be used
     by default
   */
 
-  let headParser = new Parser(rules,isNumber,containsValue);
+  let headParser = new Parser(rules);
 
   /*
     once some arguments are parsed then you need to reset the parser
     to parse new arguments again
     you can do that by
   */
+  parserName.reset();
 
-parserName.reset();
+  //then you can reuse your parser
+  parserName.parse(args);
+
 ```
 
 ## Errors thrown at different cases
@@ -111,7 +121,7 @@ parserName.reset();
   message:'Cannot combine : -option1 -option2'
 }
 {
-  name:'Missingvalue',
+  name:'MissingValue',
   message:'Value of : -option is missing'}
 {
   name:'IllegalOption',
@@ -137,7 +147,6 @@ parserName.reset();
     options: {
       n: 10
     },
-    argsLength : 'single',
     arguments: ["toDo.txt"]
   }
 
@@ -148,7 +157,6 @@ parserName.reset();
     options: {
       n: 10
     },
-    argsLength : 'noArgs',
     arguments: []
   }
 
@@ -159,7 +167,6 @@ parserName.reset();
     options: {
       n: 12
     },
-    argsLength : 'single',
     arguments: ["toDo.txt"]
   }
 
@@ -170,7 +177,6 @@ parserName.reset();
     options: {
       n: 10
     },
-    argsLength : 'noArgs',
     arguments: []
   }
 
@@ -182,7 +188,6 @@ parserName.reset();
     options: {
       n: 10
     },
-    argsLength : 'noArgs',
     arguments: []
   }
 ```
@@ -198,7 +203,6 @@ args=['-n10','-20'];
   options: {
     n: 20
   },
-  argsLength : 'single',
   arguments: ["toDo.txt"]
 }
 ```

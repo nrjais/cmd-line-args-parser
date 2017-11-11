@@ -1,22 +1,33 @@
 let Error = require('./error');
 
-let Parser = function(parseRules, isValue, containsValue) {
+let Parser = function(parseRules) {
   this.rules = parseRules;
   this.parsedData = {};
   let combinedFlags = parseRules.combinedFlags;
-  this.rules.combinedFlags = combinedFlags === undefined ? true : combinedFlags;
+  this.rules.combinedFlags = false;
+  this.containsValue = this.hasValue;
+  this.isValue = this.isNumber;
   this.reset();
-  this.containsValue = containsValue || this.hasValue;
-  this.isValue = isValue || this.isNumber;
 }
 
 Parser.prototype.reset = function() {
   this.parsedData = {
     flags: [],
     options: {},
-    arguments: [],
-    argsLength: 'noArgs'
+    arguments: []
   }
+}
+
+Parser.prototype.setIsValue = function(isValue){
+  this.isValue = isValue;
+}
+
+Parser.prototype.setContainsValue = function(containsValue){
+  this.containsValue = containsValue;
+}
+
+Parser.prototype.setCombinedFlags = function(value){
+  this.rules.combinedFlags = value;
 }
 
 Parser.prototype.hasValue = function(option) {
@@ -46,18 +57,7 @@ Parser.prototype.hasMinimumOptions = function() {
     let err = new Error('MaxOptions', 'Cannot combine : -' + options.join(' -'));
     err.throw();
   }
-  this.setArgumentsLength();
   return this.parsedData;
-}
-
-Parser.prototype.setArgumentsLength = function() {
-  let data = this.parsedData;
-  data.arguments.length > 0 && this.updateArgumentsLength('single');
-  data.arguments.length > 1 && this.updateArgumentsLength('multiple');
-}
-
-Parser.prototype.updateArgumentsLength = function(update) {
-  this.parsedData.argsLength = update;
 }
 
 Parser.prototype.setDefaults = function() {

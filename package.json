@@ -1,6 +1,6 @@
 {
   "name": "cmd-line-args-parser",
-  "version": "2.0.0",
+  "version": "2.5.0",
   "description": "This package can be used to parse command line arguments to a specific structure of rules you define that is used during parsing",
   "main": "index.js",
   "directories": {
@@ -9,13 +9,25 @@
   "scripts": {
     "test": "node runAllTests.js"
   },
+  "repository": {
+    "type":"git",
+    "url":"https://github.com/nrjais/cmd-line-args-parser.git"
+  },
+  "bugs":{
+    "url":"https://github.com/nrjais/cmd-line-args-parser/issues"
+  },
+  "homepage": "https://nrjais.github.io/cmd-line-args-parser/",
   "keywords": [
+    "command line arguments parser",
+    "command-line-arguments-parser",
+    "command line arguments",
+    "command line parser",
+    "command line arguments",
     "command",
-    "line",
     "arguments",
     "parser",
     "parsing"
   ],
   "author": "nrjais",
-  "license": "ISC"
+  "license": "Apache-2.0"
 }

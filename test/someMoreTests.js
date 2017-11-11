@@ -18,21 +18,73 @@ let getRules = function(flags = ['h']) {
   };
 }
 
-let containsNumber = function(option) {
-  let regex = /(\d)+$/g;
+let containsValue = function(option) {
+  let regex = /[xyz]$/g;
   return regex.test(option);
 }
 
 
-let isNumber = function(value) {
-  return Number.isInteger(+value);
+let isValue = function(value) {
+  let regex = /^[xyz]$/g;
+  return regex.test(value);
+};
+
+test['parse should find the value if it is non numerical'] = function() {
+  let demoArgs1 = ['-ny', '-cx'];
+  let parser = new Parser(getRules())
+  parser.setIsValue(isValue);
+  parser.setContainsValue(containsValue);
+  let expected = {
+    arguments: [],
+    flags: [],
+    options: {
+      n: 'y',
+      c: 'x'
+    },
+  };
+  let actual = parser.parse(demoArgs1);
+  assert.deepEqual(actual, expected);
+};
+
+test['parse should find the value if it is non numerical and separate'] = function() {
+  let demoArgs1 = ['-n','y', '-c','x'];
+  let parser = new Parser(getRules())
+  parser.setIsValue(isValue);
+  parser.setContainsValue(containsValue);
+  let expected = {
+    arguments: [],
+    flags: [],
+    options: {
+      n: 'y',
+      c: 'x'
+    },
+  };
+  let actual = parser.parse(demoArgs1);
+  assert.deepEqual(actual, expected);
+};
+
+
+test['parse should find the value if it is non numerical and separate and args'] = function() {
+  let demoArgs1 = ['-n','y', '-c','x','file1','file2'];
+  let parser = new Parser(getRules())
+  parser.setIsValue(isValue);
+  parser.setContainsValue(containsValue);
+  let expected = {
+    arguments: ['file1','file2'],
+    flags: [],
+    options: {
+      n: 'y',
+      c: 'x'
+    },
+  };
+  let actual = parser.parse(demoArgs1);
+  assert.deepEqual(actual, expected);
 };
 
 test['parse seperates options option and value'] = function() {
   let demoArgs1 = ['-n10', '-c12'];
   let parser = new Parser(getRules())
   let expected = {
-    argsLength: 'noArgs',
     arguments: [],
     flags: [],
     options: {
@@ -43,11 +95,11 @@ test['parse seperates options option and value'] = function() {
   let actual = parser.parse(demoArgs1);
   assert.deepEqual(actual, expected);
 };
+
 test['parse seperates options option and value and optional argument in arguments'] = function() {
   let demoArgs2 = ['-n10', '-c12', "toDo.txt"];
-  let parser = new Parser(getRules(), isNumber, containsNumber)
+  let parser = new Parser(getRules())
   let expected = {
-    argsLength: 'single',
     arguments: ['toDo.txt'],
     flags: [],
     options: {
@@ -60,9 +112,8 @@ test['parse seperates options option and value and optional argument in argument
 };
 test['parse seperates options and value,files in arguments and flags'] = function() {
   let demoArgs3 = ['-n12', "toDo.txt", '--help'];
-  let parser = new Parser(getRules(), isNumber, containsNumber)
+  let parser = new Parser(getRules())
   let expected = {
-    argsLength: 'multiple',
     arguments: ['toDo.txt', '--help'],
     flags: [],
     options: {
@@ -74,9 +125,8 @@ test['parse seperates options and value,files in arguments and flags'] = functio
 };
 test['parse gives default value of empty arguments'] = function() {
   let demoArgs4 = [];
-  let parser = new Parser(getRules(), isNumber, containsNumber)
+  let parser = new Parser(getRules())
   let expected = {
-    argsLength: 'noArgs',
     arguments: [],
     flags: [],
     options: {
@@ -88,9 +138,8 @@ test['parse gives default value of empty arguments'] = function() {
 };
 test['parse should put all the optional argument in arguments'] = function() {
   let demoArgs5 = ["toDo.txt", 'abc.txt'];
-  let parser = new Parser(getRules(), isNumber, containsNumber)
+  let parser = new Parser(getRules())
   let expected = {
-    argsLength: 'multiple',
     arguments: ['toDo.txt', 'abc.txt'],
     flags: [],
     options: {
@@ -102,9 +151,8 @@ test['parse should put all the optional argument in arguments'] = function() {
 };
 test['parse should seperates all the input in options,arguments and verbose'] = function() {
   let demoArgs6 = ['-n12', '-c12', '--help', 'toDo.txt', 'sample.js'];
-  let parser = new Parser(getRules(), isNumber, containsNumber)
+  let parser = new Parser(getRules())
   let expected = {
-    argsLength: 'multiple',
     arguments: ['toDo.txt', 'sample.js'],
     flags: ['h'],
     options: {
@@ -118,7 +166,8 @@ test['parse should seperates all the input in options,arguments and verbose'] = 
 
 test["parse should throw an error when trying to combine flags"] = function(){
   let args = ["-ac"];
-  let parser = new Parser(getRules(['a','c']), isNumber, containsNumber)
+  let parser = new Parser(getRules(['a','c']));
+  parser.setCombinedFlags(false);
   try {
     parser.parse(args);
     assert.ok(false);
@@ -129,7 +178,7 @@ test["parse should throw an error when trying to combine flags"] = function(){
 
 test["parse should throw an error when options exceed max allowed"] = function(){
   let args = ["-n4",'-c3','-d5'];
-  let parser = new Parser(getRules(['a','c']), isNumber, containsNumber)
+  let parser = new Parser(getRules(['a','c']))
   try {
     parser.parse(args);
     assert.ok(false);
@@ -141,7 +190,7 @@ test["parse should throw an error when options exceed max allowed"] = function()
 
 test["parse should throw an error when has invalid options option"] = function(){
   let args = ['-k5'];
-  let parser = new Parser(getRules(), isNumber, containsNumber)
+  let parser = new Parser(getRules())
   try {
     parser.parse(args);
     assert.ok(false);
