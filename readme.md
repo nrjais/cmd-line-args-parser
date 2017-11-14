@@ -33,8 +33,8 @@ rules = {
                           maximum number of required options that are allowed
                           otherwise an error will be thrown*/
   flags: [],             //all the flags allowed
-  verbose: {}           /*
-                          rules that define verboses so that they can be converted
+  replacer: {}           /*
+                          rules that define replacers so that they can be converted
                           to a flag
                         */
 }
@@ -58,7 +58,7 @@ rules = {
     minimum: 1,
     maximum: 1,
     flags: ['h'],
-    verbose: {'help':'h'} //here --help will be replaced by 'h' so 'h' should be valid flag
+    replacer: {'help':'h'} //here --help will be replaced by 'h' so 'h' should be valid flag
   }
 
 

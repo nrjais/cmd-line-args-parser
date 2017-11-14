@@ -12,7 +12,7 @@ let getRules = function(flags = ['h']) {
     maximum: 2,
     combinedFlags : false,
     flags: flags,
-    verbose: {
+    replacer: {
       'help': 'h'
     }
   };

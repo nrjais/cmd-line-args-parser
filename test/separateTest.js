@@ -11,7 +11,7 @@ let getRules = function(validOptions = ['n', 'c'], flags = [], maximum = 1) {
     minimum: 1,
     maximum: maximum,
     flags: flags,
-    verbose: {}
+    replacer: {}
   };
 };
 
@@ -37,7 +37,7 @@ test["isNumber should return false if it is a number"] = function() {
   let parser = new Parser(getRules());
   assert.ok(parser.isNumber('10'));
   assert.ok(parser.isNumber('5'));
-  assert.ok(parser.isNumber('0'));
+  assert.ok(!parser.isNumber('0'));
   assert.ok(parser.isNumber(10));
   assert.ok(parser.isNumber(1));
 };

@@ -78,7 +78,7 @@ Parser.prototype.setOptionValue = function(option, value) {
 }
 
 Parser.prototype.getOptionIfVerbose = function(option) {
-  return this.rules.verbose[option.replace('-', '')] || option;
+  return this.rules.replacer[option.replace('-', '')] || option;
 };
 
 Parser.prototype.handleOption = function(option, argsList) {
@@ -123,7 +123,7 @@ Parser.prototype.getOptionAndValue = function(option) {
 }
 
 Parser.prototype.isNumber = function(option) {
-  return Number.isInteger(+option);
+  return Number.isInteger(+option) && +option > 0;
 }
 
 Parser.prototype.isOption = function(option) {

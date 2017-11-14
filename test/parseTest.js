@@ -11,7 +11,7 @@ let getRules = function(validOptions = ['n', 'c'], flags = [], maximum = 1) {
     minimum: 1,
     maximum: maximum,
     flags: flags,
-    verbose: {}
+    replacer: {}
   };
 }
 
