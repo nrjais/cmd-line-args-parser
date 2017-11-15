@@ -1,9 +1,9 @@
-const Error = function(name, message) {
+const Error = function (name, message) {
   this.name = name;
   this.message = message;
 }
 
-Error.prototype.throw = function(){
+Error.prototype.throw = function () {
   throw this;
 }
 module.exports = Error;

@@ -35,6 +35,7 @@ test['parse should find the value if it is non numerical'] = function() {
   parser.setIsValue(isValue);
   parser.setContainsValue(containsValue);
   let expected = {
+    setByDefault : false,
     arguments: [],
     flags: [],
     options: {
@@ -52,6 +53,7 @@ test['parse should find the value if it is non numerical and separate'] = functi
   parser.setIsValue(isValue);
   parser.setContainsValue(containsValue);
   let expected = {
+    setByDefault : false,
     arguments: [],
     flags: [],
     options: {
@@ -70,6 +72,7 @@ test['parse should find the value if it is non numerical and separate and args']
   parser.setIsValue(isValue);
   parser.setContainsValue(containsValue);
   let expected = {
+    setByDefault : false,
     arguments: ['file1','file2'],
     flags: [],
     options: {
@@ -85,6 +88,7 @@ test['parse seperates options option and value'] = function() {
   let demoArgs1 = ['-n10', '-c12'];
   let parser = new Parser(getRules())
   let expected = {
+    setByDefault : false,
     arguments: [],
     flags: [],
     options: {
@@ -100,6 +104,7 @@ test['parse seperates options option and value and optional argument in argument
   let demoArgs2 = ['-n10', '-c12', "toDo.txt"];
   let parser = new Parser(getRules())
   let expected = {
+    setByDefault : false,
     arguments: ['toDo.txt'],
     flags: [],
     options: {
@@ -114,6 +119,7 @@ test['parse seperates options and value,files in arguments and flags'] = functio
   let demoArgs3 = ['-n12', "toDo.txt", '--help'];
   let parser = new Parser(getRules())
   let expected = {
+    setByDefault : false,
     arguments: ['toDo.txt', '--help'],
     flags: [],
     options: {
@@ -127,6 +133,7 @@ test['parse gives default value of empty arguments'] = function() {
   let demoArgs4 = [];
   let parser = new Parser(getRules())
   let expected = {
+    setByDefault : true,
     arguments: [],
     flags: [],
     options: {
@@ -140,6 +147,7 @@ test['parse should put all the optional argument in arguments'] = function() {
   let demoArgs5 = ["toDo.txt", 'abc.txt'];
   let parser = new Parser(getRules())
   let expected = {
+    setByDefault : true,
     arguments: ['toDo.txt', 'abc.txt'],
     flags: [],
     options: {
@@ -153,6 +161,7 @@ test['parse should seperates all the input in options,arguments and verbose'] = 
   let demoArgs6 = ['-n12', '-c12', '--help', 'toDo.txt', 'sample.js'];
   let parser = new Parser(getRules())
   let expected = {
+    setByDefault : false,
     arguments: ['toDo.txt', 'sample.js'],
     flags: ['h'],
     options: {

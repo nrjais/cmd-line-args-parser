@@ -23,6 +23,7 @@ test["parse should give formatted object when has no arguments"] = function() {
     options: {
       n: 10
     },
+    setByDefault : true,
     arguments: []
   }
   assert.deepEqual(parser.parse(args), expectedArgv);
@@ -36,6 +37,7 @@ test["parse should give formatted object when has only default option value (-nu
     options: {
       n: 2
     },
+    setByDefault : false,
     arguments: []
   }
   assert.deepEqual(parser.parse(args), expectedArgv);
@@ -49,6 +51,7 @@ test["parse should give formatted object when has only options with value combin
     options: {
       n: 2
     },
+    setByDefault : false,
     arguments: []
   }
   assert.deepEqual(parser.parse(args), expectedArgv);
@@ -62,6 +65,7 @@ test["parse should give formatted object when has only option and value separate
     options: {
       n: 3
     },
+    setByDefault : false,
     arguments: []
   }
   assert.deepEqual(parser.parse(args), expectedArgv);
@@ -75,6 +79,7 @@ test["parse should give formatted object when has only arguments with default op
     options: {
       n: 10
     },
+    setByDefault : true,
     arguments: ["file.txt"]
   }
   assert.deepEqual(parser.parse(args), expectedArgv);
@@ -88,6 +93,7 @@ test["parse should give formatted object when has option(-2) and argument"] = fu
     options: {
       n: 2
     },
+    setByDefault : false,
     arguments: ["file.txt"]
   }
   assert.deepEqual(parser.parse(args), expectedArgv);
@@ -101,6 +107,7 @@ test["parse should give formatted object when has options(-2) and filename"] = f
     options: {
       n: 2
     },
+    setByDefault : false,
     arguments: ["file.txt"]
   }
   assert.deepEqual(parser.parse(args), expectedArgv);
@@ -114,6 +121,7 @@ test["parse should give formatted object when has number of lines(-n 2) and file
     options: {
       n: 2
     },
+    setByDefault : false,
     arguments: ['file.txt']
   }
   assert.deepEqual(parser.parse(args), expectedArgv);
@@ -127,6 +135,7 @@ test["parse should give formatted object when has options(-2) multiple filename"
     options: {
       n: 2
     },
+    setByDefault : false,
     arguments: ["file.txt", "second.txt"]
   }
   assert.deepEqual(parser.parse(args), expectedArgv);
@@ -142,6 +151,7 @@ test["parse should give formatted object when has multiple options combined(-ac)
     options: {
       n: 10
     },
+    setByDefault : true,
     arguments: []
   };
   assert.deepEqual(parser.parse(args), expectedArgv);

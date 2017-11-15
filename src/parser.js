@@ -1,6 +1,6 @@
 let Error = require('./error');
 
-let Parser = function(parseRules) {
+let Parser = function (parseRules) {
   this.rules = parseRules;
   this.parsedData = {};
   let combinedFlags = parseRules.combinedFlags;
@@ -10,32 +10,33 @@ let Parser = function(parseRules) {
   this.reset();
 }
 
-Parser.prototype.reset = function() {
+Parser.prototype.reset = function () {
   this.parsedData = {
     flags: [],
     options: {},
+    setByDefault : false,
     arguments: []
   }
 }
 
-Parser.prototype.setIsValue = function(isValue){
+Parser.prototype.setIsValue = function (isValue) {
   this.isValue = isValue;
 }
 
-Parser.prototype.setContainsValue = function(containsValue){
+Parser.prototype.setContainsValue = function (containsValue) {
   this.containsValue = containsValue;
 }
 
-Parser.prototype.setCombinedFlags = function(value){
+Parser.prototype.setCombinedFlags = function (value) {
   this.rules.combinedFlags = value;
 }
 
-Parser.prototype.hasValue = function(option) {
+Parser.prototype.hasValue = function (option) {
   let regex = /(\d)+$/g;
   return regex.test(option);
 }
 
-Parser.prototype.parse = function(argsList) {
+Parser.prototype.parse = function (argsList) {
   let arg = argsList[0];
   if (this.isOption(arg)) {
     option = arg.replace('-', '');
@@ -48,7 +49,7 @@ Parser.prototype.parse = function(argsList) {
   return this.hasMinimumOptions();
 }
 
-Parser.prototype.hasMinimumOptions = function() {
+Parser.prototype.hasMinimumOptions = function () {
   let options = Object.keys(this.parsedData.options)
   if (options.length < this.rules.minimum) {
     this.setDefaults();
@@ -60,13 +61,14 @@ Parser.prototype.hasMinimumOptions = function() {
   return this.parsedData;
 }
 
-Parser.prototype.setDefaults = function() {
+Parser.prototype.setDefaults = function () {
   let defaultOption = this.getDefaultOptionValue();
+  this.parsedData.setByDefault = true;
   this.parsedData.options[defaultOption[0]] = defaultOption[1];
 }
 
 
-Parser.prototype.setOptionValue = function(option, value) {
+Parser.prototype.setOptionValue = function (option, value) {
   this.verifyValidity(option);
   if (this.isValue(value)) {
     this.parsedData.options[option] = value;
@@ -77,11 +79,11 @@ Parser.prototype.setOptionValue = function(option, value) {
   return true;
 }
 
-Parser.prototype.getOptionIfVerbose = function(option) {
+Parser.prototype.getOptionIfVerbose = function (option) {
   return this.rules.replacer[option.replace('-', '')] || option;
 };
 
-Parser.prototype.handleOption = function(option, argsList) {
+Parser.prototype.handleOption = function (option, argsList) {
   option = this.getOptionIfVerbose(option);
   if (this.containsValue(option)) {
     this.setOptionValue(...this.getOptionAndValue(option));
@@ -96,7 +98,7 @@ Parser.prototype.handleOption = function(option, argsList) {
   return this.parsedData;
 }
 
-Parser.prototype.getCombinedSeparately = function(options) {
+Parser.prototype.getCombinedSeparately = function (options) {
   if (!this.rules.combinedFlags) {
     let err = new Error('CombiningFlags', 'Combining Multiple flags not allowed');
     err.throw();
@@ -104,13 +106,13 @@ Parser.prototype.getCombinedSeparately = function(options) {
   return options.split('');
 }
 
-Parser.prototype.getDefaultOptionValue = function() {
+Parser.prototype.getDefaultOptionValue = function () {
   let defaultOption = Object.keys(this.rules.default)[0];
   let value = this.rules.default[defaultOption];
   return [defaultOption, value];
 }
 
-Parser.prototype.getOptionAndValue = function(option) {
+Parser.prototype.getOptionAndValue = function (option) {
   let optionValue = [];
   if (this.isValue(option)) {
     let defaultOption = this.getDefaultOptionValue()[0];
@@ -122,20 +124,20 @@ Parser.prototype.getOptionAndValue = function(option) {
   return optionValue;
 }
 
-Parser.prototype.isNumber = function(option) {
+Parser.prototype.isNumber = function (option) {
   return Number.isInteger(+option) && +option > 0;
 }
 
-Parser.prototype.isOption = function(option) {
+Parser.prototype.isOption = function (option) {
   let regex = /^-{1,2}(\w)+/g;
   return regex.test(option);
 }
 
-Parser.prototype.isFlag = function(option) {
+Parser.prototype.isFlag = function (option) {
   return this.rules.flags.includes(option);
 }
 
-Parser.prototype.verifyValidity = function(option) {
+Parser.prototype.verifyValidity = function (option) {
   let allLegal = this.rules.validOptions.concat(this.rules.flags);
   let legal = allLegal.includes(option);
   if (!legal) {

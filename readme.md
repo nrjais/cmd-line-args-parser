@@ -147,6 +147,7 @@ rules = {
     options: {
       n: 10
     },
+    setByDefault : false,                   //this will be true when the option is set using default
     arguments: ["toDo.txt"]
   }
 
@@ -157,6 +158,7 @@ rules = {
     options: {
       n: 10
     },
+    setByDefault : true,
     arguments: []
   }
 
@@ -167,6 +169,7 @@ rules = {
     options: {
       n: 12
     },
+    setByDefault : false,
     arguments: ["toDo.txt"]
   }
 
@@ -177,6 +180,7 @@ rules = {
     options: {
       n: 10
     },
+    setByDefault : true,
     arguments: []
   }
 
@@ -188,6 +192,7 @@ rules = {
     options: {
       n: 10
     },
+    setByDefault : false,
     arguments: []
   }
 ```
@@ -203,6 +208,7 @@ args=['-n10','-20'];
   options: {
     n: 20
   },
+  setByDefault : false,
   arguments: ["toDo.txt"]
 }
 ```
